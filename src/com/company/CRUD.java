@@ -19,6 +19,7 @@ public class CRUD {
     public BigDecimal getIncCoef ( ) throws ClassNotFoundException, SQLException {
         Class.forName( "com.mysql.jdbc.Driver" );
         connection = DriverManager.getConnection( URL , USERNAME , PASSWORD );
+        statement = connection.createStatement();
         String sqlQuery = "SELECT coefic FROM increasing_coefficient";
         resultSet = statement.executeQuery( sqlQuery );
         while (resultSet.next( )) {
