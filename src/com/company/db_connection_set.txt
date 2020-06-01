@@ -1,0 +1,3 @@
+URL = "jdbc:mysql://localhost:3306/station_db?useUnicode=true&serverTimezone=UTC&useSSL=false"
+USERNAME = "root"
+PASSWORD = "root"
