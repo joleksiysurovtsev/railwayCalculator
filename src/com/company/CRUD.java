@@ -3,13 +3,20 @@ package com.company;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.*;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class CRUD {
 
-	private Map<String, String> csc = GetSettings.serverSetting();
+	private Map<String, String> csc = GetSettings.serverSetting("C:\\IT Learn\\railwayCalculator\\src\\com\\company\\db_connection_set.txt");
+
+	private static Connection connection;
+	private static Statement statement;
+	private static ResultSet resultSet;
+
+	private BigDecimal cosTime;
+	private BigDecimal incCoefficient;
+	private BigDecimal costShuntingWork;
 
 	public CRUD () throws IOException {
 	}
@@ -20,24 +27,32 @@ public class CRUD {
 		statement = connection.createStatement();
 	}
 
-	private static Connection connection;
-	private static Statement statement;
-	private static ResultSet resultSet;
 
-	private BigDecimal cosTime;
-	private BigDecimal incCoef;
-
-	public BigDecimal getIncCoef () throws ClassNotFoundException, SQLException {
+	public BigDecimal getIncCoefficient () throws ClassNotFoundException, SQLException {
 		getConnection();
 		String sqlQuery = "SELECT coefic FROM increasing_coefficient";
 		resultSet = statement.executeQuery(sqlQuery);
 		while (resultSet.next()) {
 			BigDecimal coefficient = resultSet.getBigDecimal(1);
-			incCoef = coefficient;
+			incCoefficient = coefficient;
 		}
 		connection.close();
-		return incCoef;
+		return incCoefficient;
 	}
+
+
+	public BigDecimal getCostShuntingWork () throws SQLException, ClassNotFoundException {
+		getConnection();
+		String sqlQuery = "SELECT coast FROM station_db.other_expenses where ID ='shunting'";
+		resultSet = statement.executeQuery(sqlQuery);
+		while (resultSet.next()) {
+			//String s = resultSet.getString("shunting");
+			BigDecimal costShuntingWork = resultSet.getBigDecimal("coast");
+		}
+		connection.close();
+		return costShuntingWork;
+	}
+
 
 	public Map<String, BigDecimal> spotting_picking_cost (Double x, Double y) throws ClassNotFoundException, SQLException {
 		getConnection();
@@ -95,13 +110,6 @@ public class CRUD {
 					BigDecimal a = resultSet.getBigDecimal(2);
 					BigDecimal b = resultSet.getBigDecimal(3);
 
-                    /* The formulas for calculating the cost of two tables are described: Total filing distance
-                     and picking up 9.4 km, including 2.8 km
-                     on the balance of the railway and 6.6 km - on the balance of the enterprise. The actual number of submissions
-                     and wagons taken during the reporting period is 30 wagons. The weighted average rate is determined by:
-                     (4052.4 x 6.6 + 5674.7 x 2.8): (6.6 + 2.8) = (26745.8 + 15888.3): 9.4 = 4535.6 UAH,
-                     */
-
 					resultMap.put(resultSet.getString(1), (a.multiply(BigDecimal.valueOf(x))).add(b.multiply(BigDecimal.valueOf(y))).divide(BigDecimal.valueOf(x).add(BigDecimal.valueOf(y))));
 				}
 				return resultMap;
@@ -133,7 +141,6 @@ public class CRUD {
 					String tq = "_";
 					query = "SELECT NUMBOFWAG, " + dist + from + tq + (from + 1) + " FROM table_pu_1";
 				}
-
 				resultSet = statement.executeQuery(query);
 			}
 
@@ -159,11 +166,9 @@ public class CRUD {
 				}
 
 			}
-
 			resultSet = statement.executeQuery(query);
 			while (resultSet.next()) {
 				resultMap.put(resultSet.getString(1), resultSet.getBigDecimal(2));
-
 			}
 		}
 		return resultMap;

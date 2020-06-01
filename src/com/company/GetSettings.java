@@ -9,8 +9,8 @@ import java.util.Scanner;
 
 public class GetSettings {
 
-	public static Map<String, String> serverSetting () throws IOException {
-		FileReader reader = new FileReader("C:\\IT Learn\\railwayCalculator\\src\\com\\company\\db_connection_set.txt");
+	public static Map<String, String> serverSetting (String file) throws IOException {
+		FileReader reader = new FileReader(file);
 		Scanner bf = new Scanner(reader);
 		Map<String, String> scs = new HashMap<>();
 		while (bf.hasNextLine()) {

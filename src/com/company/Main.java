@@ -13,7 +13,9 @@ public class Main {
 
 	public static void main (String[] args) throws SQLException, ClassNotFoundException, IOException {
 		CRUD crud = new CRUD();
-		BigDecimal coefficient = crud.getIncCoef();
+		BigDecimal coefficient = crud.getIncCoefficient();
+		BigDecimal sh = crud.getCostShuntingWork();
+		System.out.println(sh);
 		Map<String, BigDecimal> spc = crud.spotting_picking_cost(3.0, 2.0);
 		System.out.println("На данный момент коефициент равен:" + coefficient);
 		System.out.println(spc.toString());
