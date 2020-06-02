@@ -15,7 +15,7 @@ public class CRUD {
     private static Statement statement;
     private static ResultSet resultSet;
 
-    private BigDecimal cosTime;
+    private double costTime;
     private double incCoefficient;
     private double costShuntingWork;
 
@@ -37,6 +37,17 @@ public class CRUD {
         }
         connection.close( );
         return incCoefficient;
+    }
+
+    public double getCostTime ( ) throws ClassNotFoundException, SQLException {
+        getConnection( );
+        String sqlQuery = "SELECT TIME_COAST FROM station_db.time_of_use where ID = 1";
+        resultSet = statement.executeQuery( sqlQuery );
+        while (resultSet.next( )) {
+            costTime = resultSet.getDouble( "TIME_COAST" );
+        }
+        connection.close( );
+        return costTime;
     }
 
     public double getCostShuntingWork ( ) throws SQLException, ClassNotFoundException {
@@ -143,4 +154,6 @@ public class CRUD {
         }
         return resultMap;
     }
+
+
 }

@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.Scanner;
 
 public class GetSettings {
-
 	public static Map<String, String> serverSetting (String file) throws IOException {
 		FileReader reader = new FileReader(file);
 		Scanner bf = new Scanner(reader);

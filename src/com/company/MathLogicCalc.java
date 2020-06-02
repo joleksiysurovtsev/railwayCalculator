@@ -5,12 +5,12 @@ import java.util.Map;
 
 public class MathLogicCalc {
 
-    public Map<String, BigDecimal> spcMultiplied(Map<String, String>){
-
-    }
-
-
-
+//    public Map<String, BigDecimal> spcMultiplied(Map<String, String>){
+//
+//    }
+//
+//
+//
 
 
 
