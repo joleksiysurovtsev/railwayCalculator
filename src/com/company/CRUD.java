@@ -3,6 +3,7 @@ package com.company;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.*;
+import java.text.DecimalFormat;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -49,56 +50,42 @@ public class CRUD {
         return costShuntingWork;
     }
 
-    public Map<String, Double> spotting_picking_cost ( Double x , Double y ) throws ClassNotFoundException, SQLException {
+    public Map<String, String> spotting_picking_cost ( Double x , Double y ) throws ClassNotFoundException, SQLException {
         getConnection( );
 
-        Map<String, Double> resultMap = new LinkedHashMap<>( );
+        Map<String, String> resultMap = new LinkedHashMap<>( );
         String query = "";
         double z = x + y;
+        DecimalFormat df = new DecimalFormat( "###.##");
 
         //по двум таблицам
         if (x > 0 && y > 0) {
-
             if (z <= 0.5) {
-                int from = 0;
+                double from = 0.0;
                 String till = "05";
                 query = "SELECT table_pu_1.NUMBOFWAG AS nt1, table_pu_1.DIST_FROM_" + from + "_" + till + " AS t1, table_pu_2.DIST_FROM_" + from + "_" + till + " AS t2 FROM table_pu_1 LEFT JOIN table_pu_2 on (table_pu_1.NUMBOFWAG = table_pu_2.NUMBOFWAG)";
-
-                resultSet = statement.executeQuery( query );
-                while (resultSet.next( )) {
-                    Double a = resultSet.getDouble( 2 );
-                    Double b = resultSet.getDouble( 3 );
-                    resultMap.put( resultSet.getString( 1 ) , ((a * x) + (b * y)) / (x + y));
-                }
+                System.out.println( query );
             }
 
             if (z > 0.5 && z <= 1) {
                 String from = "05";
                 int till = 1;
                 query = "SELECT table_pu_1.NUMBOFWAG AS nt1, table_pu_1.DIST_FROM_" + from + "_" + till + " AS t1, table_pu_2.DIST_FROM_" + from + "_" + till + " AS t2 FROM table_pu_1 LEFT JOIN table_pu_2 on (table_pu_1.NUMBOFWAG = table_pu_2.NUMBOFWAG)";
-
-                resultSet = statement.executeQuery( query );
-                while (resultSet.next( )) {
-                    Double a = resultSet.getDouble( 2 );
-                    Double b = resultSet.getDouble( 3 );
-
-                    resultMap.put( resultSet.getString( 1 ) , ((a * x) + (b * y)) / (x + y) );
-                }
             }
 
             if (z > 1 && z <= 10) {
-                int from = (int) Math.floor( x );
+                int from = (int) Math.floor( z );
                 String tq = "_";
                 String dist = "DIST_FROM_";
                 query = "SELECT table_pu_1.NUMBOFWAG AS nt1, table_pu_1." + dist + from + tq + (from + 1) + " AS t1, table_pu_2." + dist + from + tq + (from + 1) + " AS t2 FROM table_pu_1 LEFT JOIN table_pu_2 on (table_pu_1.NUMBOFWAG = table_pu_2.NUMBOFWAG)";
+            }
 
-                resultSet = statement.executeQuery( query );
-                while (resultSet.next( )) {
-                    Double a = resultSet.getDouble( 2 );
-                    Double b = resultSet.getDouble( 3 );
-
-                    resultMap.put( resultSet.getString( 1 ) , ((a * x) + (b * y)) / (x + y) );
-                }
+            resultSet = statement.executeQuery( query );
+            while (resultSet.next( )) {
+                double a = resultSet.getDouble( 2 );
+                double b = resultSet.getDouble( 3 );
+                BigDecimal f = BigDecimal.valueOf( ((a * x) + (b * y)) / (x + y) );
+                resultMap.put( resultSet.getString( 1 ) , df.format( f ) );
             }
         }
 
@@ -149,7 +136,9 @@ public class CRUD {
             }
             resultSet = statement.executeQuery( query );
             while (resultSet.next( )) {
-                resultMap.put( resultSet.getString( 1 ) , resultSet.getDouble( 2 ) );
+                BigDecimal f = BigDecimal.valueOf( resultSet.getDouble( 2 ) );
+
+                resultMap.put( resultSet.getString( 1 ) , df.format( f ) );
             }
         }
         return resultMap;
